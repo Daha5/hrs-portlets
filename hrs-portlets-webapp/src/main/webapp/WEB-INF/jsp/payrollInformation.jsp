@@ -133,24 +133,36 @@
 
 <script type="text/javascript" language="javascript">
 <rs:compressJs>
-(function($, fluid, dl) {
-    $(function() {
+(function($, fluid, dl, jQuery) {
+    hrsPortlet.jQuery(function() {
+        
+        <%-- Disable Right Clicks in Safari browsers --%>
+        <%-- Safari (not webkit) does not honor context header for naming downloads--%>
+        <%-- If indexOf('Constructor')>0 then we are in Safari Browser--%>
+        if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) {
+            $( "body" ).on( "contextmenu", ".dl-clickable", function() {
+                return false;
+            });
+        }
+        
+        $(document).ready(function(){
+        
         var updateAmmountVisibility = function(checkbox) {
             var checked = checkbox.is(':checked');
             var ammounts = $("#${n}dl-payroll-information table.dl-table a.dl-earning-amount");
             if (ammounts.length == 0) {
-                $.log("No ammount fields found to update, returning true");
+                console.log("No ammount fields found to update, returning true");
                 return true;
             }
             
             var ammountData = ammounts.data();
             if (ammountData.visibilityUpdated == checked) {
-                $.log("Earnings Toggle toggled " + checked + " matches current state, returning false");
+                console.log("Earnings Toggle toggled " + checked + " matches current state, returning false");
                 return false;
             }
             
             ammountData.visibilityUpdated = checked;
-            $.log("Earnings Toggle toggled: " + checked + " updating " + ammounts.length + " ammount fields");
+            console.log("Earnings Toggle toggled: " + checked + " updating " + ammounts.length + " ammount fields");
             if (checked) {
                 ammounts.show();
             }
@@ -162,7 +174,7 @@
         };
         
         var earningsToggle = $("#${n}dl-earnings-amount-toggle");
-        $.log("Earnings Toggle: " + earningsToggle.length);
+        console.log("Earnings Toggle: " + earningsToggle.length);
         earningsToggle.change(function() {
             updateAmmountVisibility(earningsToggle);
         });
@@ -225,7 +237,8 @@
         dl.tabs("#${n}dl-tabs");
         
         dl.util.clickableContainer("#${n}dl-payroll-information");
+        });
     });    
-})(dl_v1.jQuery, dl_v1.fluid, dl_v1);
+})(dl_v1.jQuery, dl_v1.fluid, dl_v1, hrsPortlet.jQuery);
 </rs:compressJs>
 </script>
